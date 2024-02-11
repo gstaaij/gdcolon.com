@@ -5,7 +5,7 @@ import os
 import shutil
 
 def main():
-    filesToFix = ["gdsplitter/style.css"]
+    filesToFix = ["gdsplitter/style.css", "assets/gdfont/fontgen.css", "gdfont/index.html"]
 
     for fileName in filesToFix:
         if (os.path.exists(fileName + ".bak")):
@@ -35,6 +35,8 @@ def main():
         if (fileName.endswith(".css")):
             fileText = fileText.replace("url('https://gdcolon.com/", "url('/")
             fileText = fileText.replace("url(\"https://gdcolon.com/", "url(\"/")
+        elif (fileName == "gdfont/index.html"):
+            fileText = fileText.replace("./assets", "/assets")
         else:
             fileText = fileText.replace("https://gdcolon.com/", "/")
         

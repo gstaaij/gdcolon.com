@@ -1,0 +1,791 @@
+<head>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-135255146-1"></script>
+    <script>window.dataLayer = window.dataLayer || []; function gtag() { dataLayer.push(arguments); } gtag('js', new Date()); gtag('config', 'UA-135255146-1');</script>
+    <title>Geometry Dash Font Generator</title>
+    <link href="./assets/gdfont/fontgen.css?v=6" type="text/css" rel="stylesheet">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta property="og:description" content="Generate some wacky messages and custom logos with the exact font textures used by Geometry Dash!">
+    <meta property="og:title" content="Geometry Dash Font Generator">
+    <meta property="og:type" content="website">
+    <meta name="og:image" itemprop="image" content="https://gdcolon.com/assets/gdfont/fontgen_logo.png">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="theme-color" content="#287DFF">
+    <link rel="icon" href="./assets/gdfont/icon.png">
+    </link>
+</head>
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pixi.js/6.2.2/browser/pixi.js"></script>
+<div class="center">
+
+    <div id="canvasBox" class="center mAdjust">
+        <canvas id="result"></canvas>
+        <img style="margin-top: 35px; display: none" src="./assets/gdfont/loading.png" id="loading" class="spin">
+    </div>
+
+    <div class="center mainBox mAdjust">
+        <div id="textboxBox">
+            <h3>Message</h3>
+            <textarea class="mAdjust" id="input" placeholder="Type something!"></textarea>
+        </div>
+
+        <div style="margin-bottom: 35px" id="optionButtons">
+            <img class="buttonOption gdButton" onclick="$('#input').val(''); generateText()" title="Reset text" src="./assets/gdfont/btn_reset.png"><!--
+            --><img class="buttonOption gdButton" id="downloadBtn" title="Download" src="./assets/gdfont/btn_download.png"><!--
+            --><img class="buttonOption gdButton" id="copyBtn" title="Copy to Clipboard" src="./assets/gdfont/btn_copy.png"><!--
+            --><img class="buttonOption gdButton" id="toggleTextbox" title="Move textbox" src="./assets/gdfont/btn_down.png">
+        </div>
+
+        <div class="optionBoxes mAdjust">
+            <div style="position: absolute; text-align: left">
+                <div class="fontTab tinyBox tinySelected gdButton"> <h2>Font</h2> </div>
+                <div class="fontTab tinyBox gdButton"> <h2>Color</h2> </div>
+                <div class="fontTab tinyBox gdButton"> <h2>Extra</h2> </div>
+            </div>
+            <div id="baseConfig" class="rightSide">
+                <div class="fontTab tinyBox expandedTab tinyGreen gdButton" style="margin-right: 0px" id="charmapButton"><h2 style="transform: scale(0.85)">Charmap</h2></div>
+            </div>
+            <div id="logoConfig" class="rightSide" style="display: none">
+                <div class="fontTab tinyBox expandedTab tinyGreen gdButton"><h2>Logo</h2></div>
+                <div class="fontTab tinyBox expandedTab tinyGreen gdButton" style="margin-right: 0px"><h2 style="transform: scale(0.9)">Symbols</h2></div>
+            </div>
+        </div>
+
+        <div style="display: flex; align-items: center; justify-content: center;">
+
+            <div class="arrowBox">
+                <img id="prevPage" class="gdButton" src="./assets/gdfont/arrow_left.png" onclick="changePage(-1)" style="display: none">
+            </div>
+
+            <div id="extraSettings" class="mAdjust">
+                <div class="settingTab fontList" tab="Font" id="fontSection">
+                    <div page="1" id="pinnedFontList"></div>
+                    <div page="1" id="mainFontList"></div>
+                    <div page="1" id="chatFontList" style="margin-bottom: 20px"></div>
+                    <div page="2" id="customFontList"></div>
+                </div>
+
+                <div class="settingTab" style="display: none" tab="Color">
+                    <h3 style="margin-bottom: 15px; margin-top: 5px">Select color:</h3>
+                    <div style="position: relative">
+                        <input id="colorInput" style="text-transform: uppercase;" maxlength=6; type="text" placeholder="ff0000" value="ff0000">
+                        <input id="colorPicker" style="position: absolute; pointer-events: none; visibility: hidden;" type="color">
+                    </div>
+                    <div id="colorChannels" style="white-space: normal; padding-top: 15px;"><!--
+                    --><div class="colorChannel gdButton" resetgold="true" color="#ffffff" style="background-color: #ffffff">
+                            <img id="trashIcon" style="display: none; left: 0" src="./assets/gdfont/trash.png">
+                        </div><!--
+                    --><div class="colorChannel gdButton" id="customColorChannel" onclick="$('#colorPicker').trigger('click')" style="background-color: #A6A6A6">
+                            <h2>+</h2>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="settingTab" style="display: none" tab="Extra">
+
+                    <h3 class="tabHeader" style="margin-bottom: 40px">Extra settings</h3>
+
+                    <div class="extraSetting">
+                        <h3 class="smaller">Align</h3>
+                        <div>
+                            <div class="alignBox gdButton" alignment="left"> <h2>&lt;</h2> </div>
+                            <div class="alignBox gdButton selectedButton" alignment="center"> <h2>-</h2> </div>
+                            <div class="alignBox gdButton" alignment="right"> <h2>&gt;</h2> </div>
+                        </div>
+                    </div>
+
+                    <div class="extraSetting">
+                        <h3 class="smaller">Max Width (px)</h3>
+                        <input id="maxWidth" type="number" infinite="true" min=500 max=20000 placeholder="(none)" value=3000 style="width: 200px; margin-top: 18px";>
+                    </div>
+
+                    <br>
+                    
+                    <div class="extraSetting" id="colCorrectOption" style="margin-top: 12px; display: none">
+                        <h3 class="smaller">Color Correct</h3>
+                        <label>
+                            <input id="colorCorrect" checked type="checkbox" onclick="keepColor = !$(this).prop('checked'); generateText()">
+                            <span class="gdButton"></span>
+                        </label>
+                    </div>
+
+                    <div class="extraSetting">
+                        <h3 class="smaller">Kerning</h3>
+                        <input id="kerning" type="number" infinite="true" min="-1000" max="5000" placeholder="0" value=0 style="width: 200px; margin-top: 12px";>
+                    </div>
+
+                </div>
+
+                <div class="settingTab" style="display: none" tab="Charmap">
+
+                    <h3 class="tabHeader" style="margin-bottom: 16px">Character Map (<span id="charmapCount"></span> chars)</h3>
+
+                    <h3 id="charmapFailed" style="margin-top: 48px">Failed to load charmap :(</h3>
+
+                    <div id="charmap"></div>
+
+                </div>
+
+                <div class="settingTab" style="display: none" tab="Logo">
+                    <h3 class="tabHeader">Logo settings</h3>
+                
+                    <div class="extraSetting">
+                        <h3 class="smaller">Border Width (px)</h3>
+                        <input id="logoBorderWidth" type="number" min=0 max=20 decimal="true" empty="2.5" placeholder="2.5" value=2.5>
+                    </div>
+
+                    <div class="extraSetting">
+                        <h3 class="smaller">Shadow Opacity (%)</h3>
+                        <input id="logoShadowOpacity" type="number" min=0 max=100 empty="30" placeholder="30" value=30>
+                    </div>
+
+                    <br>
+
+                    <div class="extraSetting">
+                        <h3 class="smaller">Shadow X (px)</h3>
+                        <input id="logoShadowX" type="number" min=-30 max=30 empty="9" placeholder="9" value=9>
+                    </div>
+
+                    <div class="extraSetting">
+                        <h3 class="smaller">Shadow Y (px)</h3>
+                        <input id="logoShadowY" type="number" min=-30 max=30 empty="5" placeholder="5" value=5>
+                    </div>
+
+                    <br>
+
+                    <div class="extraSetting">
+                        <h3 class="smaller" style="display: inline-block; vertical-align: middle;">Border</h3>
+                        <input style="position: absolute; visibility: hidden;" type="color" id="borderColor" value="#ffffff">
+                        <div id="borderColorChannel" class="colorBox gdButton" onclick="$('#borderColor').trigger('click')" style="width: 70px; height: 70px; display: inline-block; vertical-align: middle;; background-color: #ffffff"></div>
+                    </div>
+
+                    <div class="extraSetting">
+                        <h3 class="smaller" style="display: inline-block; vertical-align: middle;"; >Shadow</h3>
+                        <input style="position: absolute; visibility: hidden;" type="color" id="shadowColor" value="#000000">
+                        <div id="shadowColorChannel" class="colorBox gdButton" onclick="$('#shadowColor').trigger('click')" style="width: 70px; height: 70px; display: inline-block; vertical-align: middle;; background-color: #000000"></div>
+                    </div>
+                </div>
+
+                <div class="settingTab" style="display: none" tab="Symbols">
+                    <h3 class="smaller" style="display: inline-block; color: white; margin-top: 15px">Lowercase symbols: </h3>
+                    <div style="display: inline-block; transform: scale(0.85);"><div id="toggleSymbols" class="tinyBox tinyGreen gdButton"> <h2>Off</h2> </div></div>
+                    <div id="symbolList"></div>
+
+                    <div style="transform: scale(0.85); margin-top: 16px" class="logoSymbol symbolsOff" onclick="$('#charmapButton').click()"><div class="tinyBox gdButton"> <h2>More</h2> </div></div>
+                </div>
+            </div>
+
+            <div class="arrowBox">
+                <img id="nextPage" class="gdButton" src="./assets/gdfont/arrow_right.png" onclick="changePage(1)">
+            </div>
+        </div>
+
+        <div id="siteCredits" style="position: relative; margin-top: 20px;">
+            <h3 class="smaller">Selected font: <a target="_blank" href="https://fontsquirrel.com/fonts/pusab" id="fontLink">Pusab</a><span id="packCredit" style="color: yellow"></span></h2>
+            <h3 class="smaller" style="margin-top: 10px">Website and programming by <a target="_blank" href="https://twitter.com/TheRealGDColon">Colon</a></h3>
+            <h3 class="smaller" style="margin-top: 10px">Most sprites/assets belong to <a target="_blank" href="https://twitter.com/RobTopGames">RobTop Games</a></h3>
+        </div>
+      
+    </div>
+</div>
+
+<script type="text/javascript">
+
+let canvas = document.getElementById('result');
+let app = new PIXI.Application({ view: canvas, width: 0, height: 0, backgroundAlpha: 0 });
+let loader = new PIXI.Loader()
+PIXI.settings.SCALE_MODE = PIXI.SCALE_MODES.NEAREST;
+
+let mobile =  /Android|webOS|iPhone|iPad|iPod|BlackBerry/i.test(navigator.userAgent)
+
+let mainFonts = [
+    { name: "Pusab", link: "fontsquirrel.com/fonts/pusab" },
+    { name: "TRS Million", link: "dafont.com/trs-million.font", forceUppercase: true },
+    { name: "SF Distant Galaxy", link: "dafont.com/sf-distant-galaxy.font" },
+    { name: "Relish Gargler", link: "dafont.com/relish-gargler.font" },
+    { name: "Joystix", link: "dafont.com/joystix.font" },
+    { name: "Good Dog", link: "dafont.com/good-dog.font" },
+    { name: "Dancing Script", link: "fontsquirrel.com/fonts/dancing-script-ot" },
+    { name: "Stencilla", link: "dafont.com/stencilia.font" },
+    { name: "Xirod", link: "dafont.com/xirod.font" },
+    { name: "Minercraftory", link: "dafont.com/minercraftory.font" },
+    { name: "Super Mario 256", link: "dafont.com/super-mario-256.font", forceUppercase: true },
+    { name: "Ketchum", link: "dafont.com/ketchum.font" },
+    { name: "Gargle", link: "dafont.com/gargle.font" },
+    { name: "Amatic", link: "fonts.google.com/specimen/Amatic+SC" },
+    { name: "Cartwheel", link: "fontsquirrel.com/fonts/cartwheel", forceUppercase: true },
+    { name: "Mothproof Script", link: "fontsquirrel.com/fonts/mothproofscript" },
+    { name: "Lemon Milk Bold", link: "dafont.com/lemon-milk.font", forceUppercase: true },
+    { name: "Lemon Milk", link: "dafont.com/lemon-milk.font", forceUppercase: true },
+    { name: "Minecraft (not actually)", link: "dafont.com/minecraft.font" },
+    { name: "Optimus Princeps", link: "dafont.com/optimusprinceps.font" },
+    { name: "Autolova", link: "dafont.com/autolova.font" },
+    { name: "Karate", link: "dafont.com/karate.font" },
+    { name: "A Annyeong Haseyo", link: "dafont.com/a-annyeong-haseyo.font" },
+    { name: "Ausweis Hollow", link: "dafont.com/ausweis.font", forceUppercase: true },
+    { name: "Gypsy Curse", link: "dafont.com/gypsy-curse.font" },
+    { name: "Magic School Two", link: "dafont.com/magic-school.font" },
+    { name: "Old English Five", link: "1001fonts.com/old-english-five-font.html" },
+    { name: "Yeah Papa", link: "1001fonts.com/yeah-papa-font.html", forceUppercase: true  },
+    { name: "Ninja Naruto", link: "dafont.com/ninja-naruto.font", forceUppercase: true  },
+    { name: "Metal Lord", link: "dafont.com/metal-lord.font", forceUppercase: true  },
+    { name: "Drip Drop", link: "freefontsdownload.net/free-drip-drop-font-167463.htm" },
+    { name: "Electroharmonix", link: "dafont.com/electroharmonix.font", forceUppercase: true  },
+    { name: "Aladin", link: "1001fonts.com/aladin-font.html" },
+    { name: "Creepster", link: "fonts.google.com/specimen/Creepster", forceUppercase: true  },
+    { name: "Call Of Ops Duty", link: "dafont.com/call-of-ops-duty.font", forceUppercase: true  },
+    { name: "BlocParty", link: "fontspace.com/bloc-party-font-f54904" },
+    { name: "Astron Boy", link: "1001fonts.com/astron-boy-font.html" },
+    { name: "Osaka Sans Serif", link: "dafont.com/osaka-sans-serif.font", forceUppercase: true  },
+    { name: "Some Time Later", link: "dafont.com/some-time-later.font" },
+    { name: "Fatboy Slim BLTC", link: "1001fonts.com/fatboy-slim-bltc-brk-font.html" },
+    { name: "Moria Citadel", link: "dafont.com/moria-citadel.font", forceUppercase: true  },
+    { name: "Rise of Kingdom", link: "1001fonts.com/rise-of-kingdom-font.html" },
+    { name: "Fantaisie Artistique", link: "dafont.com/fantaisie-artistiqu.font" },
+    { name: "Edge of the Galaxy", link: "fontspace.com/edge-of-the-galaxy-font-f45748" },
+    { name: "Wash Your Hand", link: "dafont.com/wash-your-hand.font" },
+    { name: "Bitwise", link: "dafont.com/bitwise.font" },
+    { name: "Foul Fiend", link: "dafont.com/foul-fiend.font", forceUppercase: true  },
+    { name: "Nandaka Western", link: "dafont.com/nandaka-western.font", forceUppercase: true  },
+    { name: "Evil Empire", link: "dafont.com/evil-empire.font", forceUppercase: true  },
+    { name: "Comical Cartoon", link: "dafont.com/comical-cartoon.font", forceUppercase: true  },
+    { name: "Carton Six", link: "dafont.com/cartonsix-nc.font", forceUppercase: true  },
+    { name: "Assassin Ninja", link: "dafont.com/aassassinninja.font" },
+    { name: "Public Pixel", link: "dafont.com/public-pixel.font" },
+    { name: "New Walt Disney UI", link: "cufonfonts.com/font/new-walt-disney-ui", forceUppercase: true  },
+    { name: "Random 5", link: "fontspace.com/random-5-font-f44485" },
+    { name: "Crafting Lesson", link: "fontspace.com/crafting-lesson-font-f51150" },
+    { name: "Game Of Squids", link: "dafont.com/game-of-squids.font" },
+    { name: "Monster Game", link: "dafont.com/monster-game.font" },
+    { name: "Lo-Sumires", link: "fontspace.com/lo-sumires-font-f29214" },
+    { name: "Gewtymol", link: "fontesk.com/gewtymol-font/" }
+]
+
+let pinnedFonts = {
+    "fontgold": Object.assign({ title: "Gold", whiteID: "fontwhite", special: true }, mainFonts[0]),
+    "fontlogo": { name: "Oxygene One", title: "Logo", link: "1001fonts.com/oxygene-1-font.html", whiteID: "fontlogowhite", special: true }
+}
+
+let chatFonts = {
+    "chat_uhd": { name: "Helvetica", title: "Main Font (UHD)", link: "myfonts.com/collections/helvetica-font-linotype" },
+    "chat_hd": { name: "Aller", title: "Main Font (HD)", link: "fontsquirrel.com/fonts/aller" }
+}
+
+let customFonts = {
+    "renogare": { name: "Renogare", source: "ssoh v4", link: "dafont.com/renogare.font" },
+    "barnacleboy": { name: "Barnacle Boy", source: "Doggie's Pack", link: "dafont.com/barnacle-boy.font" },
+    "praetorian": { name: "Praetorian", source: "Technical's Pack", link: "dafont.com/praetorian.font" },
+    "politica": { name: "Politica", source: "SiKky's Pack", link: "fonts.adobe.com/fonts/politica" },
+    "cloudylove": { name: "Cloudy With a Chance of Love", source: "Utopia", link: "dafont.com/cloudy-with-a-chance-of-love.font" },
+    "jua": { name: "Jua", source: "Diamond Pack", link: "fonts.google.com/specimen/Jua" },
+    "kristen": { name: "Kristen", source: "Purpura", link: "fontsgeek.com/fonts/kristen-normal-itc-std-regular" },
+    "launica": { name: "La Unica", source: "Material", link: "dafont.com/la-unica.font" },
+    "grobold": { name: "Grobold", source: "Ember", link: "dafont.com/grobold.font" },
+    "papermario": { name: "PaperMarioFont", source: "Super Mario Dash", link: "ffonts.net/PaperMarioFont.font.download" },
+    "boomlings": { name: "ChunkFive Roman", source: "Boomlings", link: "dafontfree.net/chunkfive-roman/f91748.htm" },
+    "cloister": { name: "Cloister Black", source: "Forlorn", link: "dafont.com/cloister-black.font" },
+    "poosab": { name: "Poosab", link: "fontsgeek.com/pusab-font" },
+    "futura": { name: "Futura", source: "Futura UI", link: "fonts.adobe.com/fonts/futura-pt" },
+    "helvetica_italics": { name: "Helvetica", title: "Helvetica Italics", source: "ssoh v4", link: "myfonts.com/collections/helvetica-font-linotype" }
+}
+
+let lastPage = 1
+let allFonts = {}
+
+function appendFonts(group, fontList, css, custom) {
+    let box = $('#' + group)
+    let list = fontList
+    if (Array.isArray(list)) {
+        let newList = {}
+        list.forEach((x, y) => {
+            newList[`gjFont${y <= 9 ? 0 : ""}${y}-uhd`] = Object.assign({ title: "Font " + (y), main: true, mainID: y+1 }, x)
+        })
+        list = newList
+    }
+
+    for (const [id, data] of Object.entries(list)) {
+        if (custom) data.custom = true
+        allFonts[id] = data
+
+        let pg = +box.attr("page") || 1
+        if (pg > 1) box.hide()
+        if (pg > lastPage) lastPage = pg
+
+        box.append(`<div font="${id}" title="${data.title || data.name}" alt="${data.title || data.name}" class="gdButton fontBox${data.special ? " specialFont" : ""}"><img class="aFont${css ? " " + css : ""}" src="./assets/gdfont/fontpreviews/${custom ? "custom/" : ""}${id}.png?v=1"></div>`)
+    }
+}
+
+appendFonts("pinnedFontList", pinnedFonts, "bigBoy")
+appendFonts("mainFontList", mainFonts)
+appendFonts("chatFontList", chatFonts, "smolBoy")
+appendFonts("customFontList", customFonts, null, true)
+
+$('.fontBox[font=1]').addClass("fontSelected")
+
+let specialchars = 'abcdefghijklmnopqrstuvwxyzàáâãäåæçèéêëìíîïðñòóôõöøùúûüýþ˄˃˅˂'.split("")
+let specialalts  = 'abcdefghijklmnopqrstuvwxyzaaaaaaaceeeeiiiionoooooouuuuyp^>v<'.split("")
+
+$('#symbols').hide();
+$('#wheel').hide();
+$('#allowlowercase').prop('checked', false);
+
+let defaultColors = [
+    "FF0000", "FF8000", "FFC800", "FFFF00", "00FF00", "00FFB4", "00FFFF", "00B4FF", "0080FF",
+    "0000FF", "8000FF", "FF00FF", "FF0080", "424242", "696969", "C8C8C8"
+]
+
+let channelList = defaultColors.map(x => `<div class="colorChannel gdButton" color="#${x}" style="background-color: #${x}"></div>`)
+$('#colorChannels').prepend(channelList)
+
+specialchars.forEach((x, y) => {
+    $('#symbolList').append(`<div class="logoSymbol symbolsOff greyBox gdButton" title="${x}"><p>${x}</p></div>`)
+    if ((y+1) % (mobile ? 10 : 12) == 0) $('#symbolList').append("<br>")
+})
+$('.logoSymbol[title=x]').find('p').css('margin-top', '10px') // hardcode fix for big character :pensive:
+
+let page = 1
+let selectedFont = "gjFont00-uhd"
+let fontID = "gjFont00-uhd"
+let trueFont = "gjFont00-uhd"
+let useSymbols = false
+let color = '#ffffff'
+let align = "center"
+let defaultMessage = "Geometry Dash\nFont Generator!"
+let keepColor = false
+
+if (mobile) {
+    $('.mAdjust').addClass('mobile')
+}
+
+$(document).on('click', '.fontBox', function () {
+    if (loading || !$(this).attr('font') || selectedFont == $(this).attr('font')) return
+    $('.fontBox').removeClass('fontSelected')
+    selectedFont = $(this).attr('font')
+
+    if (selectedFont == "fontgold" || selectedFont == "fontlogo") {
+        color = null
+        setColor(color, true)
+        $('#trashIcon').show()
+        $('#colCorrectOption').show()
+    }
+    else {
+        $('#trashIcon').hide()
+        $('#colCorrectOption').hide()
+    }
+    
+    if (selectedFont == "fontlogo") {
+        $('#logoConfig').show()
+        $('#baseConfig').hide()
+        $('#input').addClass('logoMode')
+    }
+    else {
+        $('#logoConfig').hide()
+        $('#baseConfig').show()
+        $('#input').removeClass('logoMode')
+    }
+
+    $(this).addClass('fontSelected')
+    let fontInfo = (allFonts[selectedFont] || mainFonts[0])
+    $('#fontLink').text(fontInfo.name).attr('href', fontInfo.link ? ('https://' + fontInfo.link) : null)
+    $('#packCredit').text(fontInfo.source ? ` (from ${fontInfo.source})` : "")
+    generateText(undefined, true)
+})
+
+$('.colorChannel').click(function() {
+    let presetColor = $(this).attr('color')
+    if (presetColor) {
+        color = $(this).attr('resetgold') ? null : presetColor
+        setColor(color)
+    }
+})
+
+function setColor(hex, noGen) {
+    let newCol = ((hex || "").replace(/#/g, "") || "ffffff")
+    $("#colorInput").css('color', 'white')
+    $("#colorInput").val(newCol)
+    $('#colorPicker').val("#" + newCol)
+    if (hex) color = newCol
+    if (!noGen) generateText()
+}
+
+$("#colorPicker").on('input', function() {
+    setColor($(this).val())
+    $("#customColorChannel").css('background-color', $(this).val()).attr('color', $(this).val())
+})
+
+$("#borderColor").on('input', function() { $("#borderColorChannel").css('background-color', $(this).val()); generateText() })
+$("#shadowColor").on('input', function() { $("#shadowColorChannel").css('background-color', $(this).val()); generateText() })
+
+$('#colorInput').keypress(function(e) {
+    if (e.key == "#") return e.preventDefault()
+})
+
+$("#colorInput").on('keyup keydown keypress blur change', function(e) {
+    let col = $(this).val()
+    $(this).val(col.replace(/#/g, ""))
+
+    if (!col.match(/^#?([A-Fa-f0-9]{6})$/)) {
+        $("#colorInput").css('color', 'red')
+        if (!e.isTrigger) generateText()
+    }
+
+    else {
+        setColor(col)
+    }
+})
+
+$("#input").on('input', function() {
+    generateText()
+})
+
+$("#kerning").on('input change', function() {
+    generateText()
+})
+
+function addAtPosition(char) {
+    if (!char) return
+    let textbox = $("#input")
+    let cursor = textbox[0].selectionStart;
+    textbox.val(textbox.val().slice(0, cursor) + char + textbox.val().slice(cursor))
+    textbox.focus();
+    textbox[0].selectionStart = textbox[0].selectionEnd = cursor + char.length; 
+    generateText()
+}
+
+$(document).on('click', '.logoSymbol', function () {
+    addAtPosition($(this).attr('title'))
+}) 
+
+
+$('.fontTab').click(function() {
+
+    let tabName = $(this).find('h2').text()
+    let foundTab = $(`.settingTab[tab=${tabName}]`)
+
+    if (tabName == "Charmap") {
+        if (!loading) renderCharmap()
+        else return
+    }
+
+    $('.fontTab').removeClass('tinySelected')
+    $(this).addClass('tinySelected')
+
+    if ($(this).hasClass('expandedTab')) { $('#extraSettings').addClass('expandedSettings'); $('#siteCredits').hide() }
+    else { $('#extraSettings').removeClass('expandedSettings'); $('#siteCredits').show() } 
+
+    if (tabName == "Font") $('.arrowBox').show()
+    else $('.arrowBox').hide()
+
+
+    $('.settingTab').hide()
+    $(foundTab).show()
+})
+
+$('.alignBox').click(function() {
+    align = $(this).attr('alignment')
+    $('.alignBox').removeClass('selectedButton')
+    $(this).addClass('selectedButton')
+    generateText()
+})
+
+$('#toggleSymbols').click(function(e) {
+    useSymbols = !useSymbols
+    if (useSymbols) {
+        $(this).addClass('tinySelected').find('h2').text("On")
+        $('.logoSymbol').removeClass('symbolsOff')
+        $('#input').addClass('lowerMode')
+    }
+    else {
+        $(this).removeClass('tinySelected').find('h2').text("Off")
+        $('.logoSymbol').addClass('symbolsOff')
+        $('#input').removeClass('lowerMode')
+    }
+    if (!e.isTrigger) generateText()
+})
+
+let boxToggled = false
+$('#toggleTextbox').click(function() {
+    boxToggled = !boxToggled
+    if (boxToggled) {
+        $('#textboxBox').insertBefore($('#siteCredits'))
+        $(this).attr('src', './assets/gdfont/btn_up.png')
+    }
+    else {
+        $('#textboxBox').insertBefore($('#optionButtons'))
+        $(this).attr('src', './assets/gdfont/btn_down.png')
+    }
+})  
+
+let loadedFonts = []
+let loading = false
+
+let stallTimer;
+let stalling = false
+
+function getTint() {
+    return color ? parseInt(color.replace("#", ""), 16) : null
+}
+
+function stall(ms) {
+    $('#loading').show()
+    $('#result').hide()
+    stalling = true
+    clearTimeout(stallTimer)
+    stallTimer = setTimeout(() => {
+        stalling = false
+        generateText(undefined, true)
+    }, ms);
+}
+
+
+function generateText(message=$("#input").val(), noStall) {
+    if (loading) return
+    fontID = selectedFont
+    trueFont = selectedFont
+    let fontData = allFonts[fontID]
+
+    if (fontID == "fontlogo" && !noStall) return stall(100) 
+
+    if (getTint() && !keepColor && fontData.whiteID) {
+        trueFont = fontData.whiteID
+    }
+
+    if (!loadedFonts.includes(trueFont)) {
+        loading = true
+        try {
+            let fntID = trueFont
+            loader.add(`${fntID}.png`, `./assets/fonts/${fontData.custom ? "custom/" : ""}${fntID}.fnt`).load(() => {
+                loadedFonts.push(trueFont)
+                loading = false
+                drawText(message)
+            })
+        }
+        catch(e) { console.log(e); loading = false }
+    }
+    else drawText(message)
+}
+
+function drawText(message) {
+
+    let isLogo = fontID == "fontlogo"
+    let isCustom = allFonts[fontID].custom
+
+    let fontText = message
+    if (!message.trim()) fontText = isLogo ? defaultMessage.toUpperCase() : defaultMessage
+    let tint = getTint()
+    let maxWidth = +$('#maxWidth').val()
+
+    if (!isLogo) {
+        specialchars.forEach((x, y) => {
+            if (specialalts.includes(x)) return
+            else fontText = fontText.replace(new RegExp(x, "gi"), specialalts[y])
+        })
+    }
+
+    if (isLogo && !useSymbols || allFonts[fontID].forceUppercase) fontText = fontText.toUpperCase()
+
+    let kerning = +$('#kerning').val() || 0
+    if (kerning > 5000) kerning = 5000
+    else if (kerning < -1000) kerning = 1000
+
+    let fontData = {
+        fontName: trueFont,
+        align: align || 'center',
+        letterSpacing: kerning
+    }
+    if (tint || tint == 0) fontData.tint = tint
+    if (maxWidth) fontData.maxWidth = maxWidth
+
+    let text = new PIXI.BitmapText(fontText, fontData)
+
+    let extraSpace = [0, 0]
+    if (isLogo) extraSpace = [
+        10 + +$('#logoBorderWidth').val() + Math.abs($('#logoShadowX').val()) || 10,
+        10 + Math.abs($('#logoShadowY').val()) || 10
+    ]
+
+    let bounds = text.getLocalBounds()
+    text.position.x = Math.max(bounds.x * -1, 0) + extraSpace[0] / 2
+    text.position.y = Math.max(bounds.y * -1, 0) + extraSpace[1] / 2
+
+    app.stage.children.forEach(x => app.stage.removeChild(x)) // clear
+    app.stage.addChild(text)
+    app.renderer.resize(Math.ceil(bounds.width) + Math.abs(bounds.x) + extraSpace[0], Math.ceil(bounds.height) + Math.abs(bounds.y) + extraSpace[1])
+
+    if (isLogo) {
+
+        // draw a sneaky rectangle to maintain position
+        let rect = new PIXI.Graphics().drawRect(0, 0, app.renderer.width, app.renderer.height)
+        app.stage.addChild(rect)
+
+        let logoCanvas = app.renderer.plugins.extract.canvas(app.stage)
+        let ctx = logoCanvas.getContext('2d');
+        let logoOutline = new Image()
+        rect.destroy()
+        text.destroy()
+
+        logoOutline.onload = () => {
+            // https://stackoverflow.com/questions/28207232/draw-border-around-nontransparent-part-of-image-on-canvas
+            let dArr = [-1,-1, 0,-1, 1,-1, -1,0, 1,0, -1,1, 0,1, 1,1] // offset array
+            let thickness = +$('#logoBorderWidth').val() || 0; let x = 3; let y = 3
+        
+            if (thickness > 0) {
+                for (let i=0; i < dArr.length; i += 2) ctx.drawImage(logoOutline, x + dArr[i] * thickness, y + dArr[i + 1] * thickness);
+                ctx.globalCompositeOperation = "source-in";
+                ctx.fillStyle = $('#borderColor').val() || "white"
+                ctx.fillRect(0, 0, logoCanvas.width, logoCanvas.height);
+                ctx.globalCompositeOperation = "source-over";
+                ctx.drawImage(logoOutline, x, y)
+            }
+
+            let logoShadow = new Image()
+            logoShadow.onload = () => {
+                let shadowOpacity = (+$('#logoShadowOpacity').val() / 100) || 0
+                if (+$('#logoShadowOpacity').val() > 0) {
+                    ctx.shadowOffsetX = +$('#logoShadowX').val() || 0;
+                    ctx.shadowOffsetY = +$('#logoShadowY').val() || 0;
+                    ctx.shadowColor = `rgba(${hexToRGB($('#shadowColor').val() || "#000000").join(", ")}, ${shadowOpacity})`;
+                    //ctx.shadowBlur = 1;   - add setting for this later?
+                    ctx.drawImage(logoShadow, 0, 0)
+                }
+
+                let base = new PIXI.BaseTexture(logoCanvas);
+                let texture = new PIXI.Texture(base);
+                let sprite = new PIXI.Sprite(texture);
+                app.stage.children.forEach(x => app.stage.removeChild(x)) // clear
+                app.stage.addChild(sprite)
+                $('#result').show()
+                $('#loading').hide()
+            }
+
+            logoShadow.onerror = err => { throw err }
+            logoShadow.src = logoCanvas.toDataURL()
+        }
+
+        logoOutline.onerror = err => { throw err }
+        logoOutline.src = logoCanvas.toDataURL()
+    }
+
+    $('#result').show()
+    $('#loading').hide()
+}
+
+generateText(defaultMessage)
+
+$(document).on('input blur', 'input[type="number"]', function (event) {
+    let x = +$(this).val();
+    let max = +$(this).attr('max')
+    let min = +$(this).attr('min')
+    let inf = $(this).attr('infinite')
+    let empty = $(this).attr('empty')
+    let noNumber = isNaN($(this).val())
+
+    if (event.type == "input") {
+        $(this).removeClass('yellow')
+        $(this).removeClass('red')
+        if ((!inf && x > max) || x < min) $(this).addClass('red')
+        else if (inf && x > max) $(this).addClass('yellow')
+    }
+
+    else {
+        $(this).removeClass('red')
+        $(this).removeClass('yellow')
+        if (noNumber && empty) { $(this).val(empty); return generateText() }
+        if (noNumber || (inf && (x > max || x == 0))) { $(this).val(""); return generateText() }
+
+        let numCheck = noNumber ? min : x
+        let newNumber = $(this).attr('decimal') ? Number(numCheck.toFixed(1)) : Math.floor(numCheck)
+        $(this).val(Math.max(Math.min(newNumber, max), min)).trigger('change')
+        generateText()
+    }
+})
+
+function hexToRGB(hex) { // https://stackoverflow.com/a/39077686
+    if (!hex.startsWith("#")) hex = "#" + hex
+    return hex.replace(/^#?([a-f\d])([a-f\d])([a-f\d])$/i,(m, r, g, b) => '#' + r + r + g + g + b + b)
+    .substring(1).match(/.{2}/g)
+    .map(x => parseInt(x, 16))
+}
+
+$('#downloadBtn').click(function() {
+    if ($('#result').is(":hidden")) return
+    let link = document.createElement('a');
+    let filename = ($('#input').val() || defaultMessage).replace(/\s+/g, " ").replace(/[/\\#%&{}\<>*?$!'":@+`|=]/g, "").slice(0, 40) || "message"
+
+    let selectfnt = allFonts[selectedFont]
+    link.download = `${selectfnt.main ? "font" + selectfnt.mainID : selectedFont.replace(/^font/, "")} - ${filename}.png`;
+    link.href = app.renderer.plugins.extract.canvas(app.stage).toDataURL()
+    link.click();
+})
+
+$('#copyBtn').click(function() {
+    if ($(this).hasClass('greyscale')) return
+    app.renderer.plugins.extract.canvas(app.stage).toBlob(function(blob) { 
+        let item = new ClipboardItem({ "image/png": blob });
+        navigator.clipboard.write([item]); 
+    });
+    $(this).attr('src', './assets/gdfont/btn_copied.png').addClass('greyscale').removeClass('gdButton')
+    setTimeout(() => { $(this).attr('src', './assets/gdfont/btn_copy.png').removeClass('greyscale').addClass('gdButton') }, 420);
+})
+
+function changePage(amt) {
+    page += amt
+    if (page < 1) page = 1
+    else if (page > lastPage) page = lastPage
+
+    $('#fontSection div[page]').hide()
+    $(`#fontSection div[page="${page}"]`).show()
+
+    page <= 1 ? $('#prevPage').hide() : $('#prevPage').show()
+    page >= lastPage ? $('#nextPage').hide() : $('#nextPage').show()
+}
+
+
+const charmapButton = $(`<div class="gdButton greyBox char"><canvas></div>`)
+
+function renderCharmap() {
+    $('#charmapFailed').hide()
+    $('#charmap').empty()
+
+    let pngID = trueFont + ".png"
+    let foundFont = loader.resources[pngID]
+
+    if (!foundFont || !foundFont.bitmapFont || !foundFont.bitmapFont.chars) {
+        $('#charmapCount').text("0")
+        return $('#charmapFailed').show()
+    }
+
+    let charCount = 0
+    for (const [charCode, data] of Object.entries(foundFont.bitmapFont.chars)) {
+        let char = String.fromCharCode(+charCode)
+        let btn = charmapButton.clone()
+
+        let tex = data.texture
+        let canv = btn.children().get(0)
+
+        canv.width = tex.orig.width
+        canv.height = tex.orig.height
+
+        let ctx = canv.getContext('2d')
+        ctx.drawImage(tex.baseTexture.resource.source, -tex.orig.x, -tex.orig.y)
+
+        btn.attr("char", charCode)
+        btn.attr("title", char)
+
+        if (fontID == "fontlogo" && !useSymbols && char.toUpperCase() != char) btn.addClass("symbolsOff ")
+
+        $('#charmap').append(btn)
+        charCount++
+    }
+
+    $('#charmapCount').text(charCount)
+}
+
+$(document).on('click', '#charmap .char', function () {
+    let char = $(this).attr("char")
+    let text = String.fromCharCode(+char)
+    addAtPosition(text)
+})
+
+
+</script>

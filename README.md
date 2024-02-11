@@ -5,8 +5,9 @@ This is a backup of a few of the client side tools on [gdcolon.com](https://gdco
 
 This backup currently includes:
 
-- [GD Save Explorer](https://gdcolon.com/gdsave/) as of 2024-02-10 (version 9)
-- [GD Spritesheet Splitter](https://gdcolon.com/gdsplitter/) as of 2024-02-11 (version 3a)
+- [GD Save Explorer](https://gdcolon.com/gdsave/) (gdsave) as of 2024-02-10 (version 9)
+- [GD Spritesheet Splitter](https://gdcolon.com/gdsplitter/) (gdsplitter) as of 2024-02-11 (version 3a)
+- [GD Font Generator](https://gdcolon.com/gdfont) (gdfont) as of 2024-02-11 (version 6)
 
 ## Running locally
 
@@ -16,7 +17,7 @@ If you want to run this locally for whatever reason, run the following command:
 $ python -m http.server
 ```
 
-If you want the site to work without internet, you must run the following command once, before running the previous one:
+If you want the site to work without internet, or **if you want gdfont to work at all**, you must run the following command once, before running the previous one:
 
 ```console
 $ python fixlinks.py
