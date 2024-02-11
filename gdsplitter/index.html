@@ -1,0 +1,252 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta property="og:description" content="Split and reassemble Geometry Dash textures and spritesheets, right from your web browser!">
+    <meta property="og:title" content="Geometry Dash Spritesheet Splitter">
+    <meta property="og:type" content="website">
+    <meta name="og:image" itemprop="image" content="https://gdcolon.com/gdsplitter/assets/splitter.png">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="theme-color" content="#FFBB22">
+    <link href="./style.css?v=3" type="text/css" rel="stylesheet">
+    <link rel="icon" href="./assets/folder.png">
+    <title>[BETA] Geometry Dash Spritesheet Splitter</title>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-135255146-1"></script>
+</head>
+<body>
+<div class="centerflex" id="dragTarget" style="width: 100%; height: 100%">
+
+<div id="uploadPlist" class="allowDrop" style="min-width: 860px">
+    <div class="brownbox" style="margin-bottom: 20px; margin-top: 50px; min-width: 850px; padding: 35px 35px;">
+        <h1 class="center">Please upload or drag a .plist file<br>from your Geometry Dash Resources folder</h1>
+        <h3 class="center" style="margin-top: 12px; font-size: 32px" id="alsoUpload">(as well as the .png spritesheet if possible)</h3>
+        <h3 class="center" style="margin-top: 12px; font-size: 32px; display: none; color: lime" id="alsoUploaded">
+            Spritesheet uploaded: <span id="alsoUploadedName"></span>
+            <span style="color: red; text-decoration: underline; text-decoration-color: red; cursor: pointer" onclick="resetEverything()">(remove)</span>
+        </h3>
+        <button onclick="fileUpload.click()" class="gdButton centerflex" style="margin: 35px auto 0px auto; width: 400px; height: 100px">Upload</button>
+        <h4 style="text-align: center; margin-top: 40px; font-size: 28px">Windows: <span style="font-size: 24px">C:/Program Files (x86)/Steam/steamapps/common/Geometry Dash/Resources</span></h4>
+        <h4 style="text-align: center; margin-top: 10px; font-size: 28px">Mac: <span style="font-size: 18px">Library/Application Support/Steam/steamapps/common/Geometry Dash/Geometry Dash.app/Contents/Resources</span></h4>  
+    </div>
+    <div class="centerflex">
+        <h3 style="margin-right: 30px; font-size: 28px">Looking to reassemble a spritesheet?</h3>
+        <button class="gdButton" style="font-size: 24px" col="darkgrey" onclick="$('.packStep').hide(); $('#packStep1').show(); $('#packSprites').show(); $('#uploadPlist').hide()">Merge sprites</button>  
+    </div>
+
+    <div style="position: absolute; bottom: 30px; left: 0px; width: 100%;">
+        <div class="centerflex" style="margin: 20px auto 0px auto; justify-content: space-between; max-width: 880px">
+            <h4 style="font-size: 20px">Website and programming by <a target="_blank" href="https://gdcolon.com">Colon</a></h4>
+            <h4 style="font-size: 20px">Geometry Dash belongs to <a target="_blank" href="https://robtopgames.com">RobTop Games</a></h4>
+        </div>
+    </div>
+    
+    <input style="display: none" id="fileUpload" type="file" accept=".plist,.xml,image/png" multiple>
+</div>
+
+<div id="uploadSheet" class="allowDrop" style="display: none">
+    <h1 class="center">Now, please upload or drag<br><span class="gold" id="sheetName"></span><br>from your Geometry Dash Resources folder</h1>
+    <button onclick="imageUpload.click()" class="gdButton centerflex" col="blue" style="margin: 35px auto 0px auto; width: 400px; height: 100px">Upload</button>
+    <h4 style="width: fit-content; font-size: 28px; margin: 24px auto 0px auto; text-decoration: underline; cursor: pointer" onclick="resetEverything()">Change file</h4>
+    <input style="display: none" id="imageUpload" type="file" accept="image/png">
+</div>
+
+<div id="packSprites" class="allowDrop" style="display: none; width: 100%">
+    <div class="brownbox packStep" id="packStep1" style="margin: 0px auto 20px auto; min-width: 850px; max-width: 1200px; width: 100%; padding: 10px 25px; display: flex; flex-direction: column; align-items: center">
+        <h2 style="margin-bottom: 20px">Spritesheet packer</h2>
+        <h3 class="center" style="margin-bottom: 35px">Please upload or drag all .png files that you would like to merge into a spritesheet!</h3>
+        
+        <div class="centerflex">
+            <button col="pink" onclick="spritesUpload.click()" class="gdButton centerflex" style="width: 400px; height: 100px">Upload</button>
+            <button id="mergeContinue" col="green" onclick="if (spritesToMerge.length) { $('.packStep').hide(); $('#packStep2').show() }" class="gdButton centerflex" style="width: 400px; height: 100px; display: none; margin-left: 30px">Continue!</button>
+        </div>
+       
+        <h4 style="font-size: 32px; margin-top: 28px; margin-bottom: 12px">Files uploaded: <span class="spriteUploadCount">0</span></h4>
+        <div style="background-color: var(--gddarkbrown); width: 90%; height: 200px; border-radius: 6px; overflow: auto;">
+            <p id="allSpritesToMerge" style="font-size: 16px; line-height: 26px; padding: 5px 5px 5px 10px"></p>
+        </div>
+        <h3 class="center" style="font-size: 29px; margin-top: 15px; margin-bottom: 5px"><span style="color: red">
+            WARNING:</span> Textures that were split with a <span class="gold">different tool</span> (e.g. Absolute) may not appear properly in-game,
+            since they usually crop the transparent space around the texture. <span class="gold">This space is needed to calculate sprite offsets!</span>
+            To fix, use <span class="gold">THIS SITE</span> to split your spritesheets.</h3>
+        <div class="centerflex">
+            <button class="gdButton" col="grey" onclick="spritesToMerge = []; listSpritesToMerge()" style="font-size: 28px; margin-top: 20px">Clear All Files</button>
+            <button class="gdButton" col="darkgrey" onclick="resetEverything()" style="font-size: 28px; margin-top: 20px; margin-left: 30px">Return Home</button>
+        </div>
+        <input style="display: none" id="spritesUpload" type="file" accept="image/png" multiple>
+    </div>
+
+    <div class="brownbox packStep" id="packStep2" style="margin: 0px auto 20px auto; min-width: 850px; max-width: 1200px; width: 100%; padding: 10px 25px; display: flex; flex-direction: column; align-items: center">
+        <h2 style="margin-bottom: 10px">Spritesheet settings</h2>
+        <h3>(<span class="spriteUploadCount">0</span> sprites)</h3>
+
+        <div class="centerflex" style="justify-content: flex-start; width: 800px; margin-top: 40px">
+            <h3 style="width: 270px">Sheet name:</h3>
+            <input style="font-size: 26px; width: 400px" maxlength="100" id="pack_sheetName" placeholder="GJ_GameSheet03">
+            <select style="margin-left: 10px; width: 50px; min-width: 50px; padding: 0px 0px 0px 8px;" id="packPresets"> <option value="-" selected disabled>+</option> </select>
+        </div>
+
+        <div class="centerflex" style="justify-content: flex-start; width: 800px; margin-top: 40px">
+            <h3 style="width: 270px">Resolution:</h3>
+            <select id="pack_resolution">
+                <option value="">Low</option>
+                <option value="hd">HD</option>
+                <option value="uhd" selected>UHD</option>
+            </select>
+        </div>
+
+        <div class="centerflex" style="justify-content: flex-start; width: 800px; margin-top: 40px">
+            <h3 style="width: 270px">Format:</h3>
+            <select id="pack_format">
+                <option value="cocos" selected>cocos2d-x .plist</option>
+                <option value="cocos_old">cocos2d old .plist (2.0 and older)</option>
+                <option value="json">.json</option>
+            </select>
+        </div>
+
+        <div class="centerflex" style="justify-content: flex-start; width: 800px; margin-top: 40px">
+            <h3 style="width: 270px">Spacing:</h3>
+            <select id="pack_padding" style="min-width: 130px">
+                <option value="0">0px</option>
+                <option value="1" selected>1px</option>
+                <option value="2">2px</option>
+                <option value="3">3px</option>
+                <option value="4">4px</option>
+                <option value="5">5px</option>
+                <option value="6">6px</option>
+                <option value="7">7px</option>
+                <option value="8">8px</option>
+                <option value="9">9px</option>
+                <option value="10">10px</option>
+
+            </select>
+        </div>
+
+        <div class="centerflex" style="margin-top: 30px; justify-content: flex-start; width: 800px">
+            <h3 style="margin-right: 30px">Allow rotating:</h3>
+            <label class="gdCheckbox gdButton">
+                <input type="checkbox" id="pack_rotate" checked>
+                <span></span>
+            </label>
+        </div>
+
+        <!-- <div class="centerflex" style="margin-top: 30px; justify-content: flex-start; width: 750px">
+            <h3 style="margin-right: 30px">(optional) Original plist:</h3>
+            <button class="gdButton" style="font-size: 28px" col="darkgrey">Upload</button>
+        </div> -->
+
+        <button class="gdButton" style="margin-top: 50px" id="createSheet">Create spritesheet!</button>
+
+        <div class="centerflex" style="margin-top: 20px">
+            <button class="gdButton" col="grey" onclick="$('.packStep').hide(); $('#packStep1').show()" style="width: 250px; font-size: 28px; margin-top: 20px">Change Files</button>
+            <button class="gdButton" col="darkgrey" onclick="resetEverything()" style="width: 250px; font-size: 28px; margin-top: 20px; margin-left: 30px">Return Home</button>
+        </div>
+    </div>
+
+    <div class="brownbox packStep centerflex" id="packStep3" style="width: 90%; height: 90%; min-width: 900px; min-height: 600px; margin: auto">
+        <div class="centerflex" id="packLoaded" style="display: none; flex-direction: column; width: 100%; height: 100%;">
+            <h2 style="margin-bottom: 8px" id="createdSheet"></h2>
+            <h3 id="packDetails" style="font-size: 32px; margin-bottom: 10px;"></h3>
+        
+            <div style="width: 100%; height: 1px; flex-grow: 1; text-align: center;">
+                <img id="packResult" style="max-width: 90%; height: 100%; object-fit: contain; background-color: var(--gddarkbrown)">
+            </div>
+    
+            <div class="centerflex" style="height: 85px; margin-bottom: 5px; align-items: flex-end;">
+                <button class="gdButton" id="downloadPack" style="font-size: 32px">Download sheet</button>
+                <button class="gdButton" id="downloadPlist" style="font-size: 32px; margin-left: 30px">Download .plist</button>
+                <button class="gdButton" onclick="resetEverything()" col="darkgrey" style="font-size: 32px; margin-left: 30px">Return Home</button>
+            </div>
+        </div>
+        <div id="packLoading">
+            <h1 id="packBuilding">Building spritesheet...</h1>
+        </div>
+    </div>
+</div>
+
+<div class="brownbox bounce" id="errorScreen" style="width: 800px; height: 420px; display: none">
+    <div style="display: flex; flex-direction: column; align-items: center; margin-top: 20px">
+        <h2 style="margin-bottom: 20px">Error!</h2>
+        <p id="errorMessage" style="text-align: center; overflow: auto; height: 200px; width: 95%"></p>
+        <button class="gdButton" onclick="resetEverything()" style="font-size: 32px; margin-top: 40px">Return Home</button>
+    </div>
+</div>
+
+<div class="brownbox bounce" id="main" style="width: 90%; height: 90%; min-width: 900px; min-height: 500px; display: none">
+    <div style="display: flex; align-items: center; flex-direction: column; height: 100%">
+        <h4 id="plistName" class="center" style="margin-top: 10px; margin-bottom: 20px; height: 70px"></h4>
+
+        <div id="mainStuff" class="centerflex" style="flex-grow: 1; height: 1px; width: 100%; justify-content: space-evenly; position: relative;">
+
+            <div style="display: flex; flex-direction: column; align-items: center; width: 25%; min-width: 300px; height: 100%; overflow: hidden;">
+                <img id="spritePreview" copywidth style="border: 2px solid black; width: 90%; max-width: 20vh; object-fit: contain; background-color: var(--gddarkbrown)">
+                <h4 id="textureName" scaletofit style="margin-top: 20px; font-size: 32px"></h4>
+
+                <div id="extraTextureInfo" style="display: none">
+                    <div class="textureDetails">
+                        <h3 style="font-size: 30px" id="texturePos"></h3>
+                        <h3 style="font-size: 30px" id="textureSize"></h3>
+                    </div>
+    
+                    <div class="centerflex" style="margin-top: 20px">
+                        <img class="gdButton" id="downloadTexture" style="object-fit: contain; height: 10vh; max-width: 80px; margin-right: 20px" src="./assets/download.png">
+                        <img class="gdButton" id="copyTexture" style="object-fit: contain; height: 10vh; max-width: 80px;"" src="./assets/copy.png">
+                    </div>
+                </div>
+
+                <div class="noFileView" style="margin-top: 20px">
+                    <div id="zoomButtons" class="centerflex">
+                        <img class="gdButton changeZoom" style="object-fit: contain; height: 8vh; max-width: 70px; margin-right: 20px" zoom="out" src="./assets/zoom_out.png">
+                        <img class="gdButton changeZoom" style="object-fit: contain; height: 8vh; max-width: 70px; margin-right: 20px" zoom="in" src="./assets/zoom_in.png">
+                        <img class="gdButton" id="enableFileView" style="object-fit: contain; height: 8vh; max-width: 70px;" src="./assets/folderbutton.png">
+                    </div>
+                </div>
+
+                <div class="centerflex yesFileView" style="margin-top: 20px">
+                    <img class="gdButton" id="disableFileView" style="object-fit: contain; height: 8vh; max-width: 70px;" src="./assets/folderbutton_off.png">
+                </div>
+            </div>  
+
+            <div id="sheetPreview" style="overflow: auto; text-align: center; width: 65%; max-height: 110%">
+                <canvas id="atlas" class="noFileView" style="background-color: var(--gddarkbrown); transform-origin: top left;"></canvas>
+
+                <div class="yesFileView centerflex" style="justify-content: space-evenly; width: 100%; height: 100%">
+        
+                    <div style="width: 100%; height: 100%; display: flex; flex-direction: column; justify-content: center">
+                        <div style="display: flex; overflow: auto">
+                            <div class="centerflex" style="width: 90px"> <img class="gdButton filePage" change="-1" style="width: 70%" src="./assets/arrow_left.png"> </div>
+                            <div style="width: 100%; display: flex; justify-content: center; flex-wrap: wrap; overflow: auto; align-content: flex-start;" id="fileList">
+                                <div class="gdButton centerflex fileTexture" style="width: 60px; height: 60px; margin: 8px 8px">
+                                    <img>
+                                </div>
+                            </div>
+                            <div class="centerflex" style="width: 90px"> <img class="gdButton filePage" change="1" style="width: 70%" src="./assets/arrow_right.png"> </div>
+                        </div>
+                        <h4 style="margin-top: 25px"><span id="filePageDisplay"></span> (<input id="filePageInput" type="number">/<span id="fileTotalPages"></span>)</h4>
+                        <h4 style="margin-top: 15px; font-size: 32px">Page size: <input id="filePageSize" style="font-size: 30px" type="number"></h4>
+                    </div>
+
+                </div>        
+            </div>
+        </div>
+
+        <div class="centerflex" style="height: 115px; align-items: flex-end;">
+            <button class="gdButton" id="downloadAll" style="width: 500px; font-size: 32px">Download all textures</button>
+            <button class="gdButton" onclick="resetEverything()" col="darkgrey" style="font-size: 32px; margin-left: 30px">Return Home</button>
+        </div>
+    </div>
+</div>
+  
+</div>
+</body>
+
+<script type="text/javascript" src="./classes/Plist.js?v=3"></script>
+<script type="text/javascript" src="./classes/PlistBuilder.js?v=3"></script>
+<script type="text/javascript" src="./classes/Spritesheet.js?v=3"></script>
+ 
+<script type="text/javascript" src="./libs/jquery.min.js"></script>
+<script type="text/javascript" src="./libs/pixi.js"></script>
+<script type="text/javascript" src="./libs/jszip.js"></script>
+<script type="text/javascript" src="./libs/maxrects-packer.js"></script>
+
+<script type="text/javascript" src="./index.js?v=3a"></script>
+
+</html>

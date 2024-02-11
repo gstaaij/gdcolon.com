@@ -1,0 +1,665 @@
+@import url('https://fonts.googleapis.com/css2?family=Lato:wght@400;700;900&display=swap');
+
+body {
+  margin: 0;
+  background: #222222;
+}
+
+p, th, td {
+  color: white;
+  font-family: Lato, Helvetica, Arial;
+  font-size: 32px;
+  margin: 0px 0px 0px 0px;
+}
+
+h1, h2 {
+  color: white;
+  font-family: Lato, Helvetica, Arial;
+  font-weight: 800;
+  font-size: 72px;
+  margin-top: 0;
+  margin-bottom: 12px;
+}
+
+h2 {
+  font-size: 40px;
+}
+
+input[type=file] {
+  color: white
+}
+
+.inline, .allInline *, .categoryBtn *, .textStuff div *, .createdInfo * {
+  display: inline-block;
+}
+
+.middle, .allMiddle *, .categoryBtn *, .textStuff div *, .createdInfo * {
+  vertical-align: middle;
+}
+
+.small {
+  font-size: 28px;
+}
+
+.smaller {
+  font-size: 25px;
+}
+
+.center {
+  text-align: center;
+}
+
+.centerflex {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.mirror {
+  transform: scaleX(-1);
+}
+
+.dragHere {
+  position: absolute;
+  top: 0; bottom: 0; left: 0; right: 0;
+  border-radius: 10px;
+  border: 2px dashed white;
+  padding: 0px 10px 0px 0px;
+  width: 1350px;
+  height: 380px;
+  margin: auto;
+  background-color: rgba(0, 0, 0, 0.3);
+}
+
+.dragHere.dragOver {
+  background-color: rgba(255, 255, 255, 0.1);
+  transition-duration: 0.2s;
+}
+
+.dragHere div {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  left: 0; right: 0;
+}
+
+.inactive {
+  pointer-events: none;
+}
+
+.empty:empty {
+  display: none;
+}
+
+.statsDiv {
+  white-space: nowrap;
+}
+
+.statsDiv.specialItems {
+  white-space: normal;
+  width: 80%;
+  margin: auto;
+}
+
+.statsDiv img {
+  margin-right: 18px;
+  height: 34px;
+}
+
+.statsDiv.specialItems img {
+  height: 40px;
+  margin-bottom: 20px;
+}
+
+.statsDiv p {
+  line-height: 150%;
+}
+
+.statCollection h2 {
+  vertical-align: middle;
+  min-height: 50px
+}
+
+.statsDiv span {
+  cursor: help;
+}
+
+.statsDiv span:hover * {
+  color: yellow;
+}
+
+.helpTitle {
+  color: yellow;
+  font-weight: 600;
+}
+
+.statCollection {
+  display: inline-block;
+  width: 600px;
+  height: 275px;
+  border-radius: 10px;
+  border: 3px solid white;
+  background-color: rgba(0, 0, 0, 0.25);
+  vertical-align: top;
+  padding-top: 28px;
+  margin: 10px 5px 5px 5px;
+}
+
+.statSplit {
+  margin-top: 10px;
+}
+
+.filterPage {
+  width: 200px;
+  border: 3px solid rgb(80, 80, 80);
+  border-radius: 10px;
+  margin: 0px 10px 25px 25px;
+  padding: 5px 5px 5px 5px;
+  display: inline-block;
+  background-color: rgba(0, 0, 0, 0.25);
+}
+
+.selectedFilterPage {
+  border-color: lime !important;
+}
+
+.selectedFilterPage p {
+  color: lime;
+}
+
+.searchFilter {
+  display: inline-block;
+  width: 650px;
+  border-radius: 10px;
+  border: 3px solid white;
+  background-color: rgba(0, 0, 0, 0.25);
+  vertical-align: top;
+  padding: 25px 10px 25px 25px;
+  margin: 10px 8px 8px 8px;
+}
+
+.searchFilter img {
+  margin: 0px 15px 15px 15px;
+  height: 70px;
+}
+
+.searchFilter h2 img {
+  vertical-align: text-top;
+  height: 50px;
+  margin: 0px 12px 0px 0px;
+}
+
+.minFilter {
+  width: 400px;
+}
+
+.minFilter p {
+  font-size: 28px;
+}
+
+input[type=number], #customSearch {
+  color: white;
+  border: 2px solid white;
+  background-color: rgba(0, 0, 0, 0.25);
+  border-radius: 10px;
+  padding: 5px 8px 5px 5px;
+  font-family: lato;
+  font-size: 26px;
+  width: 150px;
+  text-align: center;
+  -moz-appearance: textfield;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input:focus {
+  outline: none;
+}
+
+.pageNum {
+  border: 2px solid rgba(255, 255, 255, 0.75) !important;
+  padding: 2px 2px 2px 2px !important;
+  width: 80px !important;
+}
+
+.filterBtn {
+  width: fit-content;
+  margin: auto
+}
+
+.minmax {
+  display: inline-block;
+  margin: 0px 15px 0px 0px;
+}
+
+.minmax input {
+  margin-top: 10px;
+}
+
+.levelSort, .chestSort, .customSort {
+  height: 38px;
+  margin: 0px 3px 0px 0px;
+}
+
+.chestType {
+  height: 50px;
+  margin: 0px 4px 0px 0px;
+}
+
+.imgFilter[enabled="false"], .chestType[enabled="false"] {
+  filter: opacity(50%) brightness(40%);
+}
+
+.textImgFilter {
+  border: 2px solid white;
+  border-radius: 10px;
+  display: inline-block;
+  padding: 10px 20px;
+  margin: 10px 10px;
+  background-color: rgba(0, 0, 0, 0.25);
+}
+
+table {
+  margin: auto;
+  border-radius: 10px;
+  table-layout: fixed;
+  width: 0px;
+}
+
+table, th, td {
+  padding: 7px 7px 7px 7px;
+  font-size: 26px;
+  text-align: left;
+  border: 3px solid white;
+  border-collapse: collapse;
+}
+
+th, td {
+  overflow: hidden;
+  white-space: nowrap;
+  word-wrap: break-word;
+  width: 180px;
+  vertical-align: middle;
+}
+
+td p {
+  font-size: 26px;
+  line-height: 38px;
+  font-family: consolas, monospace !important;
+}
+
+td p img, td img {
+  vertical-align: middle;
+  height: 32px;
+  margin-right: 6px;
+}
+
+td.shardRow {
+  overflow-x: auto;
+}
+
+td.shardRow div {
+  display: flex;
+}
+
+td.shardRow p {
+  margin-right: 16px;
+}
+
+.bold {
+  font-weight: bold;
+}
+
+.tSmall {
+  font-size: 18px;
+}
+
+.seekbtn {
+  height: 50px;
+  margin: 0px 5px 0px 0px;
+}
+
+.categoryBtn, button {
+  display: inline-block;
+  background-color: rgba(0, 0, 0, 0.25);
+  border-radius: 5px;
+  border: 3px solid rgb(80, 80, 80);
+  padding: 10px 10px 10px 10px;
+  margin: 0px 10px 15px 15px
+}
+
+.categoryBtn img, button img {
+  height: 50px;
+  margin-right: 5px;
+}
+
+.selectedCategory {
+  background-color: black;
+  border-color: white;
+}
+
+.selectedCategory p {
+  color: yellow
+}
+
+button {
+  border-color: white;
+  cursor: pointer;
+}
+
+.specialRow {
+  background-color: rgba(128, 0, 0, 0.12)
+}
+
+.takeout {
+  width: 350px;
+  border-radius: 10px;
+  border: 3px solid white;
+  background-color: rgba(0, 0, 0, 0.25);
+  padding: 14px 0px 14px 14px;
+  margin: 16px 18px 16px 16px;
+  display: inline-block;
+}
+
+.takeout img {
+  height: 100px;
+  margin-top: 20px;
+}
+
+.incPass {
+  border-bottom: 3px dotted;
+  cursor: pointer;
+}
+
+.incPass:active {
+  filter: brightness(150%);
+}
+
+#misc div {
+  margin-bottom: 50px
+}
+
+.achTracker {
+  width: 70%;
+  min-width: 600px;
+  max-width: 1800px;
+  margin: 0px auto 35px auto;
+}
+
+.achLabel {
+  margin-bottom: 7px;
+}
+
+.achLabel h2 {
+  margin: 0px 0px;
+}
+
+.achLabel img {
+  height: 40px;
+  margin-right: 10px;
+}
+
+.achBounds {
+  height: 40px;
+  margin: 12px auto 12px auto;
+  position: relative;
+}
+
+.achBar {
+  width: 100%;
+  height: 100%;
+  border: 3px solid white;
+  border-radius: 420px;
+  background-color: rgba(0, 0, 0, 0.5);
+  overflow: hidden;
+  position: relative;
+}
+
+.achBar div {
+  height: 100%;
+}
+
+.achLine {
+  position: absolute;
+  border-left: 3px dashed white;
+  height: 100%;
+}
+
+.achInfo {
+  position: absolute;
+  height: 30px;
+  right: -40px;
+  bottom: 30px;
+}
+
+.achIcons {
+  background-color: rgba(0, 0, 0, 0.5);
+  border-radius: 16px;
+  width: 98%;
+  margin-top: 25px;
+  margin-bottom: 10px;
+  padding: 1px 2%;
+}
+
+.achIcons h2 {
+  font-size: 30px;
+  margin: 14px auto 10px auto
+}
+
+.achIconList {
+  flex-wrap: wrap;
+}
+
+.achIconList div {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  width: 90px;
+  height: 80px;
+  padding: 7px 0px 7px 0px;
+  margin-bottom: 20px;
+  margin-top: 5px;
+  cursor: pointer;
+}
+
+.achIconList div:hover { 
+  border-radius: 14px;
+  background-color: rgba(255, 255, 255, 0.15);
+}
+
+.achIconList img {
+  width: 50px;
+  height: 50px;
+  margin-bottom: 5px;
+  object-fit: contain;
+}
+
+#createdLevelButtons {
+  width: 1100px;
+  margin: auto;
+}
+
+.createdLevelButton {
+  text-align: left;
+  background-color: rgba(255, 255, 255, 0.08);
+  height: 80px;
+  overflow: hidden;
+  border-radius: 10px;
+  border: 4px solid black;
+  cursor: pointer;
+  padding: 10px 12px;
+  margin: 10px 10px;
+  transition-duration: 0.07s;
+  transition-timing-function: ease-in-out;
+}
+
+.createdLevelButton:hover {
+  background-color: rgba(255, 255, 255, 0.125);
+}
+
+.createdLevelButton:active {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+.createdLevelButton.expanded {
+  background-color: rgba(255, 255, 255, 0.08) !important; 
+  height: max-content !important;
+  cursor: initial !important;
+}
+
+.closeCreated {
+  cursor: pointer;
+}
+
+#createdLevelButtons .createdFace {
+  height: 80px;
+  margin-right: 20px;
+}
+
+.createdStat {
+  overflow: hidden;
+  white-space: nowrap;
+  margin-top: 7px;
+  margin-right: 3px;
+  display: inline-block;
+}
+
+.createdStat img {
+  width: 30px;
+}
+
+.createdStat p {
+  font-size: 28px;
+}
+
+.extraLevelInfo {
+  font-size: 28px;
+  vertical-align: top;
+  margin-left: 3px;
+  white-space: nowrap;
+}
+
+.viewLevelData p {
+  margin: 0px 3px 20px 3px;
+  cursor: pointer;
+  color: aqua;
+  text-decoration: underline;
+  font-size: 28px;
+}
+
+.divider {
+  text-align: center;
+  width: 90%;
+  max-width: 1500px;
+  border-color: rgba(255, 255, 255, 0);
+  background-color: rgba(255, 255, 255, 0.5);
+  margin: 15px auto 25px auto;
+}
+
+.gdButton {
+  cursor: pointer;
+  transition-duration: 0.07s;
+  transition-timing-function: ease-in-out;
+}
+
+.gdButton:active {
+  animation: bounceButton 0.25s ease-in-out forwards;
+}
+
+.textStuff {
+  text-align: left;
+  width: 80%;
+  max-width: 1550px;
+  min-width: 700px;
+  margin: auto;
+  padding-left: 32px;
+}
+
+.textStuff h2 { font-size: 34px; margin-bottom: 0; }
+.textStuff p { font-size: 29px; margin-top: 7px; }
+.textStuff img {
+  height: 52px;
+  margin-right: 12px
+}
+
+.textStuff div p {
+  display: block;
+  line-height: 40px;
+}
+
+.textStuff div p b {
+  vertical-align: middle;
+  height: 45px;
+  margin-left: 10px;
+}
+
+.miscName {
+  vertical-align: middle !important;
+  width: 620px;
+  height: 45px;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.dotted {
+  border-bottom: 2.5px dotted white;
+  width: 500px;
+  margin-left: 12px;
+}
+
+.levelDetailName {
+  vertical-align: middle !important;
+  display: inline-block;
+  width: 330px;
+  height: 45px;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.levelDetailDot {
+  border-bottom: 2.5px dotted white;
+  width: 330px;
+  display: inline-block;
+  vertical-align: middle;
+  margin-left: 12px;
+}
+
+.fillerBreak {
+  height: 20px;
+}
+
+.greyed {
+  pointer-events: none;
+  filter: saturate(0) opacity(50%) brightness(75%);
+}
+
+.colorIcon {
+  border-radius: 420px;
+}
+
+.red {
+  color: red !important;
+}
+
+.grey {
+  color: #aaaaaa !important;
+}
+
+@keyframes bounceButton {
+  0% {
+      transform: scale(1);
+  }
+  50% {
+      transform: scale(1.12);
+  }
+  75% {
+      transform: scale(1.06);
+  }
+  100% {
+      transform: scale(1.1);
+  }
+}
