@@ -22,7 +22,7 @@ If you want the site to work without internet, you must run the following comman
 $ python fixlinks.py
 ```
 
-Please keep in mind that this doesn't replace the links to [gdbrowser.com/iconkit](https://gdbrowser.com/iconkit/) in gdsave yet, because those aren't in this repo yet.
+Please keep in mind that this doesn't replace the links to [gdbrowser.com/iconkit](https://gdbrowser.com/iconkit/) in gdsave yet, because those aren't currently in this repo.
 
 ## Disclaimer
 
